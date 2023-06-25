@@ -1,8 +1,9 @@
 import * as React from "react"
 import Link from "next/link"
-import { Icons } from "@components/icons"
+
 import { siteConfig } from "@config/site"
 import { cn } from "@lib/utils"
+import { Icons } from "@components/icons"
 
 import { NavItem } from "../types/nav"
 
