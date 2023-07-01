@@ -30,7 +30,7 @@ function constructAdapterUser(user: User): AdapterUser {
   }
 }
 
-function constructAdapterAccount(account: AdapterAccount): Account {
+function constructAccount(account: AdapterAccount): Account {
   return {
     id: randomUUID(), // Assuming you're using UUID v4 for IDs
     userId: account.userId.toString(),
@@ -41,10 +41,19 @@ function constructAdapterAccount(account: AdapterAccount): Account {
     expiresAt: account.accessTokenExpires
       ? new Date(account.accessTokenExpires as number).getTime()
       : 0,
-    token_type: "Bearer", // Fill this in as necessary
-    scope: "email", // Fill this in as necessary
-    id_token: "", // Fill this in as necessary
-    session_state: "", // Fill this in as necessary
+    token_type: account.token_type || "",
+    scope: account.scope || "",
+    id_token: account.id_token || "",
+    session_state: account.session_state || "",
+  }
+}
+
+function constructAdapterAccount(account: Account): AdapterAccount {
+  return {
+    ...account,
+    userId: account.userId.toString(),
+    providerAccountId: account.providerAccountId.toString(),
+    accessTokenExpires: account.expiresAt,
   }
 }
 
@@ -78,6 +87,7 @@ export default function DrizzleAdapter(): Adapter {
         .from(users)
         .where(eq(users.email, email))
       const firstUser = allUsers[0]
+      if (!firstUser) return null
       return constructAdapterUser(firstUser)
     },
     async getUserByAccount({
@@ -122,7 +132,7 @@ export default function DrizzleAdapter(): Adapter {
       return null
     },
     async linkAccount(account: AdapterAccount) {
-      const mappedAccount = constructAdapterAccount(account)
+      const mappedAccount = constructAccount(account)
       const newAccount = await db
         .insert(accounts)
         .values(mappedAccount)

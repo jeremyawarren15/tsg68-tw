@@ -12,7 +12,7 @@ export const providerTypes = pgEnum("providerTypes", [
 export const accounts = pgTable("accounts", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: uuid("userId").notNull(),
-  type: providerTypes("provider").notNull(),
+  type: providerTypes("type").notNull(),
   provider: varchar("provider").notNull(),
   providerAccountId: varchar("providerAccountId").notNull(),
   refreshToken: varchar("refreshToken").notNull(),
